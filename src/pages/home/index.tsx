@@ -1,22 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import useDebounce from '@/hooks/useDebounce'
 import { useGetContractFunctionsQuery } from '@/queries/contracts'
 import type { AbiItem } from '@/repositories/contracts'
 import { useState } from 'react'
+import { useChainId } from 'wagmi'
 
 export default function Home() {
   const [address, setAddress] = useState('')
-  const [chainId, setChainId] = useState('1')
   const debouncedAddress = useDebounce(address, 300)
+  const chainId = useChainId()
 
   const {
     data: functions,
@@ -32,25 +26,13 @@ export default function Home() {
         <CardDescription>
           Enter the contract address and select the chain to search for the contract functions.
         </CardDescription>
-        <div className="flex gap-2 md:flex-row flex-col">
-          <Input
-            type="text"
-            placeholder="Enter contract address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full md:w-[400px]"
-          />
-          <Select value={chainId} onValueChange={setChainId}>
-            <SelectTrigger className="w-full md:w-[150px]">
-              <SelectValue placeholder="Select a chain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Ethereum</SelectItem>
-              <SelectItem value="137">Polygon</SelectItem>
-              <SelectItem value="8453">Base</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Input
+          type="text"
+          placeholder="Enter contract address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full"
+        />
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-0">
         {isFetching ? (
@@ -72,7 +54,7 @@ export default function Home() {
               key={`${func.name}>${func.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
               className="flex justify-between items-center border rounded-xl p-2 gap-4"
             >
-              <div>
+              <div className="break-all">
                 {func.name}({func.inputs?.map((input) => input.name).join(', ')})
               </div>
               <Button>Set name</Button>
