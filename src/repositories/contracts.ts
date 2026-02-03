@@ -31,7 +31,7 @@ export type Log = {
 }
 
 export const contractsRepository = {
-  getContractFunctions: async (chainId: number, address: string): Promise<AbiItem[]> => {
+  getContractAbi: async (chainId: number, address: string): Promise<AbiItem[]> => {
     const response = await performRequest(
       `https://api.etherscan.io/v2/api?module=contract&action=getabi&address=${address}&chainid=${chainId}&apikey=${import.meta.env.VITE_ETHERSCAN_API_KEY}`,
     )
@@ -39,7 +39,7 @@ export const contractsRepository = {
       throw new Error(response.result)
     }
     const abi = JSON.parse(response.result)
-    return abi.filter((item: AbiItem) => item.type === 'function')
+    return abi
   },
 
   getContractLogs: async (

@@ -5,19 +5,25 @@ import useDebounce from '@/hooks/useDebounce'
 import { useGetContractFunctionsQuery } from '@/queries/contracts'
 import type { AbiItem } from '@/repositories/contracts'
 import { useState } from 'react'
-import { useChainId } from 'wagmi'
+import type { PublicClient } from 'viem'
+import { useChainId, usePublicClient } from 'wagmi'
 
 export default function ContractCard() {
   const [address, setAddress] = useState('')
   const debouncedAddress = useDebounce(address, 300)
   const chainId = useChainId()
+  const publicClient = usePublicClient()
 
   const {
     data: functions,
     isFetching,
     isPending,
     isError,
-  } = useGetContractFunctionsQuery({ chainId: Number(chainId), address: debouncedAddress })
+  } = useGetContractFunctionsQuery({
+    chainId: Number(chainId),
+    address: debouncedAddress,
+    publicClient: publicClient as PublicClient,
+  })
 
   return (
     <Card className="shadow-none rounded-3xl p-2 gap-2 flex-1">
