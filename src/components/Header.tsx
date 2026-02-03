@@ -1,18 +1,12 @@
 import { truncateAddress } from '@/lib/web3'
-import {
-  injected,
-  useChainId,
-  useConnect,
-  useConnection,
-  useDisconnect,
-  useSwitchChain,
-} from 'wagmi'
+import { useAppKit } from '@reown/appkit/react'
+import { useChainId, useConnection, useDisconnect, useSwitchChain } from 'wagmi'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import icon from '/icon.png'
 
 export default function Header() {
-  const connect = useConnect()
+  const { open } = useAppKit()
   const disconnect = useDisconnect()
   const { address } = useConnection()
   const chainId = useChainId()
@@ -47,7 +41,7 @@ export default function Header() {
             X
           </Button>
         ) : (
-          <Button onClick={() => connect.mutate({ connector: injected() })}>Connect Wallet</Button>
+          <Button onClick={() => open()}>Connect Wallet</Button>
         )}
       </div>
     </div>
