@@ -1,5 +1,6 @@
 import { truncateAddress } from '@/lib/web3'
 import { useAppKit } from '@reown/appkit/react'
+import { XIcon } from 'lucide-react'
 import { useChainId, useConnection, useDisconnect, useSwitchChain } from 'wagmi'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
@@ -37,11 +38,18 @@ export default function Header() {
           </SelectContent>
         </Select>
         {address ? (
-          <Button size="icon" onClick={() => disconnect.mutate()} className="text-sm">
-            X
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => disconnect.mutate()}
+            className="text-sm cursor-pointer"
+          >
+            <XIcon className="size-4" />
           </Button>
         ) : (
-          <Button onClick={() => open()}>Connect Wallet</Button>
+          <Button variant="outline" onClick={() => open()} className="cursor-pointer">
+            Connect Wallet
+          </Button>
         )}
       </div>
     </div>

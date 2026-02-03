@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { decodeEnsRecordLogs } from '@/lib/web3'
 import { useGetContractLogsQuery } from '@/queries/contracts'
+import { TrashIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { keccak256, namehash, toHex } from 'viem'
 import { useChainId, useConnection, useEnsName, useEnsResolver } from 'wagmi'
@@ -48,8 +49,8 @@ export default function EnsCard() {
   }, [logs])
 
   return (
-    <Card className="shadow-none rounded-3xl p-2 gap-2 flex-1">
-      <CardHeader className="p-6 border rounded-xl">
+    <Card className="shadow-none rounded-3xl p-2 gap-2 flex-1 border-0">
+      <CardHeader className="p-6 border rounded-xl bg-muted">
         <CardTitle>Named Transactions</CardTitle>
         <CardDescription>Current named transactions for your primary ENS name.</CardDescription>
         {isFetchingEnsName ? (
@@ -57,19 +58,19 @@ export default function EnsCard() {
             Loading...
           </div>
         ) : isErrorEnsName ? (
-          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500">
+          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500 bg-white">
             ERROR
           </div>
         ) : ensName === null ? (
-          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500">
+          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500 bg-white">
             No ENS name
           </div>
+        ) : ensName ? (
+          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-green-500 bg-white">
+            {ensName}
+          </div>
         ) : (
-          ensName && (
-            <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-green-500">
-              {ensName}
-            </div>
-          )
+          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-gray-500"></div>
         )}
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-0 text-sm">
@@ -81,7 +82,7 @@ export default function EnsCard() {
           </div>
         ) : isErrorLogs ? (
           <div className="text-red-500 text-center border rounded-xl py-16">Invalid contract</div>
-        ) : decodedLogs.length === 0 ? (
+        ) : !decodedLogs || decodedLogs.length === 0 ? (
           <div className="text-red-500 text-center border rounded-xl py-16">No logs</div>
         ) : (
           decodedLogs.map(([key, value]) => (
@@ -90,7 +91,9 @@ export default function EnsCard() {
                 <div className="break-all">{key}</div>
                 <div className="break-all text-xs text-muted-foreground">{value}</div>
               </div>
-              <Button className="text-xs">Delete</Button>
+              <Button variant="ghost" className="cursor-pointer">
+                <TrashIcon className="size-4 text-muted-foreground" />
+              </Button>
             </div>
           ))
         )}

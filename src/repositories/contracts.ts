@@ -2,7 +2,7 @@ import { performRequest } from '@/client/apiClient'
 
 export type AbiItem = {
   type: string
-  name?: string
+  name: string
   inputs?: Array<{
     name: string
     type: string
