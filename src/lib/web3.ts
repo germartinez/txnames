@@ -35,7 +35,9 @@ export function decodeEnsRecordLogs(logs: Log[]): [string, string][] {
     }
   }
 
-  return Object.entries(logsRecords).sort(([a], [b]) => a.localeCompare(b))
+  return Object.entries(logsRecords)
+    .filter(([_, value]) => value !== '')
+    .sort(([a], [b]) => a.localeCompare(b))
 }
 
 export async function resolveImplementationOfProxyContract(
