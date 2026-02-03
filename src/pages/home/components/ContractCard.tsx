@@ -22,9 +22,9 @@ export default function ContractCard() {
   return (
     <Card className="shadow-none rounded-3xl p-2 gap-2 flex-1">
       <CardHeader className="p-6 border rounded-xl">
-        <CardTitle>Search for a contract</CardTitle>
+        <CardTitle>Add Named Transaction</CardTitle>
         <CardDescription>
-          Enter the contract address and select the chain to search for the contract functions.
+          Select a contract function and store it as a named transaction in your ENS name.
         </CardDescription>
         <Input
           type="text"
@@ -34,30 +34,27 @@ export default function ContractCard() {
           className="w-full"
         />
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 p-0">
+      <CardContent className="flex flex-col gap-2 p-0 text-sm">
         {isFetching ? (
           <div className="text-gray-500 text-center border rounded-xl p-16">Loading...</div>
         ) : isPending ? (
           <div className="text-gray-500 text-center border rounded-xl p-16">
-            <p>TX_NAMES allows you to name your transactions.</p>
-            <p>Search for a contract to get started.</p>
+            <p>List of contract functions</p>
           </div>
         ) : isError ? (
           <div className="text-red-500 text-center border rounded-xl py-16">Invalid contract</div>
         ) : functions && functions.length === 0 ? (
           <div className="text-red-500 text-center border rounded-xl py-16">No functions</div>
         ) : (
-          functions &&
-          functions.length > 0 &&
           functions.map((func: AbiItem) => (
             <div
               key={`${func.name}>${func.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
               className="flex justify-between items-center border rounded-xl p-2 gap-4"
             >
               <div className="break-all">
-                {func.name}({func.inputs?.map((input) => input.name).join(', ')})
+                {func.name}({func.inputs?.map((input) => `${input.type} ${input.name}`).join(', ')})
               </div>
-              <Button>Set name</Button>
+              <Button className="text-xs">Set name</Button>
             </div>
           ))
         )}

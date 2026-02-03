@@ -1,4 +1,4 @@
-import { truncateAddress } from '@/lib/utils'
+import { truncateAddress } from '@/lib/web3'
 import {
   injected,
   useChainId,
