@@ -12,11 +12,13 @@ export function useGetContractFunctionsQuery(args: { chainId: number; address: s
 export function useGetContractLogsQuery(args: {
   chainId: number
   address: string
+  topic0: string
   topic1: string
 }) {
   return useQuery({
     queryKey: ['contracts', 'logs', args.chainId, args.address],
-    queryFn: () => contractsRepository.getContractLogs(args.chainId, args.address, args.topic1),
+    queryFn: () =>
+      contractsRepository.getContractLogs(args.chainId, args.address, args.topic0, args.topic1),
     enabled: !!args.chainId && !!args.address,
   })
 }
