@@ -11,11 +11,7 @@ export default function EnsCard() {
   const chainId = useChainId()
   const { address: connectedAddress } = useConnection()
 
-  const {
-    data: ensName,
-    isFetching: isFetchingEnsName,
-    isError: isErrorEnsName,
-  } = useEnsName({
+  const { data: ensName, isError: isErrorEnsName } = useEnsName({
     address: connectedAddress || undefined,
     chainId: Number(chainId),
     query: {
@@ -53,11 +49,7 @@ export default function EnsCard() {
       <CardHeader className="p-6 border rounded-xl bg-muted">
         <CardTitle>Named Transactions</CardTitle>
         <CardDescription>Current named transactions for your primary ENS name.</CardDescription>
-        {isFetchingEnsName ? (
-          <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-gray-500">
-            Loading...
-          </div>
-        ) : isErrorEnsName ? (
+        {isErrorEnsName ? (
           <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500 bg-white">
             ERROR
           </div>
