@@ -1,7 +1,8 @@
 import { truncateAddress } from '@/lib/web3'
 import { useAppKit } from '@reown/appkit/react'
-import { XIcon } from 'lucide-react'
+import { MoonIcon, SunIcon, XIcon } from 'lucide-react'
 import { useChainId, useConnection, useDisconnect, useSwitchChain } from 'wagmi'
+import { useTheme } from './theme-provider'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import icon from '/icon.png'
@@ -12,6 +13,7 @@ export default function Header() {
   const { address } = useConnection()
   const chainId = useChainId()
   const switchChain = useSwitchChain()
+  const { theme, setTheme } = useTheme()
 
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-2 mb-8">
@@ -20,6 +22,13 @@ export default function Header() {
         <h1 className="text-2xl font-bold">TX_NAMES</h1>
       </div>
       <div className="flex items-stretch gap-2">
+        <Button
+          variant="outline"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="cursor-pointer"
+        >
+          {theme === 'dark' ? <MoonIcon className="size-4" /> : <SunIcon className="size-4" />}
+        </Button>
         {address && (
           <div className="border rounded-md px-3 text-sm flex items-center">
             {truncateAddress(address)}
