@@ -68,39 +68,44 @@ export async function resolveImplementationOfProxyContract(
   } catch {} // eslint-disable-line no-empty
 }
 
-export function decodeEnsRecordLogs(logs: Log[], ensName: string): [string, string][] {
-  if (!logs || !ensName) return []
-
-  const decodedLogs = logs.map((log) =>
-    decodeEventLog({
-      data: log.data as `0x${string}`,
-      topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
-      abi: [
-        {
-          type: 'event',
-          name: 'TextChanged',
-          inputs: [
-            { indexed: true, name: 'node', type: 'bytes32' },
-            { indexed: true, name: 'indexedKey', type: 'string' },
-            { indexed: false, name: 'key', type: 'string' },
-            { indexed: false, name: 'value', type: 'string' },
-          ],
-        },
-      ],
-    }),
-  )
+export function decodeEnsRecordLogs(logs: Log[]): Record<string, string> {
+  if (!logs) return {}
 
   const logsRecords: Record<string, string> = {}
-  if (decodedLogs) {
-    for (const log of decodedLogs) {
-      const { key, value } = log.args
-      logsRecords[key] = value
+  for (const log of logs) {
+    try {
+      const decoded = decodeEventLog({
+        data: log.data as `0x${string}`,
+        topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
+        abi: [
+          {
+            type: 'event',
+            name: 'TextChanged',
+            inputs: [
+              { indexed: true, name: 'node', type: 'bytes32' },
+              { indexed: true, name: 'indexedKey', type: 'string' },
+              { indexed: false, name: 'key', type: 'string' },
+              { indexed: false, name: 'value', type: 'string' },
+            ],
+          },
+        ],
+      })
+      const { key, value } = decoded.args
+      if (key.endsWith('.tx-names')) {
+        logsRecords[key] = value
+      }
+    } catch (error) {
+      continue
     }
   }
 
-  return Object.entries(logsRecords)
-    .filter(([key, value]) => value !== '' && key.endsWith(`.${ensName}`))
-    .sort(([a], [b]) => a.localeCompare(b))
+  for (const key in logsRecords) {
+    if (logsRecords[key] === '') {
+      delete logsRecords[key]
+    }
+  }
+
+  return logsRecords
 }
 
 export function encodeSetEnsRecordData(
@@ -123,7 +128,16 @@ export function encodeSetEnsRecordData(
       },
     ],
     functionName: 'setText',
-    args: [node, option.key, option.value],
+    args: [node, option.key + '.tx-names', option.value],
   })
   return data
+}
+
+export function extractEnsName(input: string): { method?: string; ensName: string } | undefined {
+  const parts = input.trim().toLowerCase().split('.')
+  if (parts.length < 2) return
+  return {
+    method: parts.length > 2 ? parts.slice(0, 1)[0] : undefined,
+    ensName: parts.slice(-2).join('.'),
+  }
 }
