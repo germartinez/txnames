@@ -1,11 +1,9 @@
-import ContractCard from './components/ContractCard'
-import EnsCard from './components/EnsCard'
+import ExecuteCard from './components/ExecuteCard'
 
 export default function Home() {
   return (
-    <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
-      <ContractCard />
-      <EnsCard />
+    <div className="max-w-3xl mx-auto">
+      <ExecuteCard />
     </div>
   )
 }
