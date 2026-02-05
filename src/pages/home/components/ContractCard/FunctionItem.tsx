@@ -19,7 +19,13 @@ export function FunctionItemSkeleton() {
   )
 }
 
-export function FunctionItem({ func }: { func: AbiItem }) {
+export function FunctionItem({
+  functionAbi,
+  contractAddress,
+}: {
+  functionAbi: AbiItem
+  contractAddress: string
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -27,7 +33,7 @@ export function FunctionItem({ func }: { func: AbiItem }) {
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
-        key={`${func.name}>${func.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
+        key={`${functionAbi.name}>${functionAbi.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
         className="flex flex-col"
       >
         <CollapsibleTrigger className={`cursor-pointer ${isOpen ? '' : 'hover:bg-muted'}`}>
@@ -35,8 +41,8 @@ export function FunctionItem({ func }: { func: AbiItem }) {
             className={`text-start rounded-lg flex justify-between gap-2 p-2 m-2 items-center ${isOpen ? 'bg-muted' : ''}`}
           >
             <div className="break-all">
-              <p className="">{func.name}</p>
-              {func.inputs?.map((input) => (
+              <p className="">{functionAbi.name}</p>
+              {functionAbi.inputs?.map((input) => (
                 <p key={`${input.name}-${input.type}`} className="text-xs text-muted-foreground">
                   {input.type} {input.name}
                 </p>
@@ -48,7 +54,7 @@ export function FunctionItem({ func }: { func: AbiItem }) {
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <FunctionDetails item={func} />
+          <FunctionDetails functionAbi={functionAbi} contractAddress={contractAddress} />
         </CollapsibleContent>
       </Collapsible>
     </Card>

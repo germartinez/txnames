@@ -39,9 +39,8 @@ export default function EnsCard() {
   })
 
   const decodedLogs: [string, string][] = useMemo(() => {
-    if (!logs) return []
-    return decodeEnsRecordLogs(logs)
-  }, [logs])
+    return decodeEnsRecordLogs(logs, ensName)
+  }, [logs, ensName])
 
   return (
     <div className="flex flex-col gap-8 flex-1">

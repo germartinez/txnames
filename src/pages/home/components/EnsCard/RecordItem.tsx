@@ -4,6 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Skeleton } from '@/components/ui/skeleton'
 import { ChevronDown, ChevronUp, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
+import RecordDetails from './RecordDetails'
 
 export function RecordItemSkeleton() {
   return (
@@ -52,9 +53,7 @@ export function RecordItem({ record }: { record: { key: string; value: string } 
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="break-all text-xs text-muted-foreground p-2 pt-0 mt-0">
-            {record.value}
-          </div>
+          <RecordDetails key={record.key} record={record} />
         </CollapsibleContent>
       </Collapsible>
     </Card>

@@ -1,43 +1,16 @@
 import type { Log } from '@/repositories/contracts'
-import { decodeEventLog, zeroAddress, zeroHash, type PublicClient } from 'viem'
+import {
+  decodeEventLog,
+  encodeFunctionData,
+  namehash,
+  zeroAddress,
+  zeroHash,
+  type Address,
+  type PublicClient,
+} from 'viem'
 
 export function truncateAddress(address: string, length: number = 6) {
   return `${address.slice(0, length + 2)}...${address.slice(-length)}`
-}
-
-export function decodeEnsRecordLogs(logs: Log[]): [string, string][] {
-  if (!logs) return []
-
-  const decodedLogs = logs.map((log) =>
-    decodeEventLog({
-      data: log.data as `0x${string}`,
-      topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
-      abi: [
-        {
-          type: 'event',
-          name: 'TextChanged',
-          inputs: [
-            { indexed: true, name: 'node', type: 'bytes32' },
-            { indexed: true, name: 'indexedKey', type: 'string' },
-            { indexed: false, name: 'key', type: 'string' },
-            { indexed: false, name: 'value', type: 'string' },
-          ],
-        },
-      ],
-    }),
-  )
-
-  const logsRecords: Record<string, string> = {}
-  if (decodedLogs) {
-    for (const log of decodedLogs) {
-      const { key, value } = log.args
-      logsRecords[key] = value
-    }
-  }
-
-  return Object.entries(logsRecords)
-    .filter(([_, value]) => value !== '')
-    .sort(([a], [b]) => a.localeCompare(b))
 }
 
 export async function resolveImplementationOfProxyContract(
@@ -93,4 +66,64 @@ export async function resolveImplementationOfProxyContract(
       return impl
     }
   } catch {} // eslint-disable-line no-empty
+}
+
+export function decodeEnsRecordLogs(logs: Log[], ensName: string): [string, string][] {
+  if (!logs || !ensName) return []
+
+  const decodedLogs = logs.map((log) =>
+    decodeEventLog({
+      data: log.data as `0x${string}`,
+      topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
+      abi: [
+        {
+          type: 'event',
+          name: 'TextChanged',
+          inputs: [
+            { indexed: true, name: 'node', type: 'bytes32' },
+            { indexed: true, name: 'indexedKey', type: 'string' },
+            { indexed: false, name: 'key', type: 'string' },
+            { indexed: false, name: 'value', type: 'string' },
+          ],
+        },
+      ],
+    }),
+  )
+
+  const logsRecords: Record<string, string> = {}
+  if (decodedLogs) {
+    for (const log of decodedLogs) {
+      const { key, value } = log.args
+      logsRecords[key] = value
+    }
+  }
+
+  return Object.entries(logsRecords)
+    .filter(([key, value]) => value !== '' && key.endsWith(`.${ensName}`))
+    .sort(([a], [b]) => a.localeCompare(b))
+}
+
+export function encodeSetEnsRecordData(
+  ensName: string,
+  option: { key: string; value: string },
+): Address {
+  const node = namehash(ensName)
+  const data = encodeFunctionData({
+    abi: [
+      {
+        inputs: [
+          { name: 'node', type: 'bytes32' },
+          { name: 'key', type: 'string' },
+          { name: 'value', type: 'string' },
+        ],
+        name: 'setText',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ],
+    functionName: 'setText',
+    args: [node, option.key, option.value],
+  })
+  return data
 }

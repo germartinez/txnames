@@ -1,9 +1,8 @@
-export default function RecordDetails({ key, value }: { key: string; value: string }) {
+export default function RecordDetails({ record }: { record: { key: string; value: string } }) {
   return (
-    <div className="m-2 mt-2 flex flex-col gap-4">
+    <div className="break-all text-xs text-muted-foreground p-2 pt-0 mt-0">
       <div className="flex flex-col gap-2">
-        <p className="text-sm">{key}</p>
-        <p className="text-sm">{value}</p>
+        <p className="text-sm">{record.value}</p>
       </div>
     </div>
   )
