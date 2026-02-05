@@ -18,7 +18,13 @@ export function RecordItemSkeleton() {
   )
 }
 
-export function RecordItem({ record }: { record: { key: string; value: string } }) {
+export function RecordItem({
+  ensName,
+  record,
+}: {
+  ensName: string
+  record: { key: string; value: string }
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -37,7 +43,7 @@ export function RecordItem({ record }: { record: { key: string; value: string } 
           <div
             className={`text-start rounded-lg flex items-center justify-between gap-2 p-2 m-2 ${isOpen ? 'bg-muted' : ''}`}
           >
-            <div className="break-all">{record.key}</div>
+            <div className="break-all">{record.key.replace('tx-names', ensName)}</div>
             <div className="flex items-center justify-center">
               <Button
                 variant="ghost"
@@ -53,7 +59,7 @@ export function RecordItem({ record }: { record: { key: string; value: string } 
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <RecordDetails key={record.key} record={record} />
+          <RecordDetails value={record.value} />
         </CollapsibleContent>
       </Collapsible>
     </Card>

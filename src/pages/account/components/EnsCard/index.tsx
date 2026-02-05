@@ -85,7 +85,7 @@ export default function EnsCard() {
       ) : (
         <div className="flex flex-col gap-2">
           {Object.entries(decodedLogs).map(([key, value]) => (
-            <RecordItem key={key} record={{ key, value }} />
+            <RecordItem key={key} ensName={ensName} record={{ key, value }} />
           ))}
         </div>
       )}

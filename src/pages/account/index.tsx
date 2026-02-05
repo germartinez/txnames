@@ -1,4 +1,4 @@
-import EnsCard from '@/pages/config/components/EnsCard'
+import EnsCard from './components/EnsCard'
 
 export default function Account() {
   return (

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/useDebounce'
 import { decodeEnsRecordLogs, extractEnsName } from '@/lib/web3'
-import { RecordItemSkeleton } from '@/pages/config/components/EnsCard/RecordItem'
+import { RecordItemSkeleton } from '@/pages/account/components/EnsCard/RecordItem'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useEffect, useMemo, useState } from 'react'
 import { keccak256, namehash, toHex, zeroAddress } from 'viem'
