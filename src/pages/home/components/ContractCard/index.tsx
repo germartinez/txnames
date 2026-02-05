@@ -16,7 +16,7 @@ export default function ContractCard() {
 
   const {
     data: functions,
-    isFetching,
+    isLoading,
     isPending,
     isError,
   } = useGetContractFunctionsQuery({
@@ -44,7 +44,7 @@ export default function ContractCard() {
           />
         </CardContent>
       </Card>
-      {isFetching ? (
+      {isLoading ? (
         <div className="flex flex-col gap-2">
           <FunctionItemSkeleton />
           <FunctionItemSkeleton />
@@ -63,10 +63,11 @@ export default function ContractCard() {
         </Card>
       ) : (
         <div className="flex flex-col gap-2">
-          {functions.map((func: AbiItem) => (
+          {functions.map((functionAbi: AbiItem) => (
             <FunctionItem
-              key={`${func.name}>${func.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
-              func={func}
+              key={`${functionAbi.name}>${functionAbi.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
+              functionAbi={functionAbi}
+              contractAddress={debouncedAddress}
             />
           ))}
         </div>

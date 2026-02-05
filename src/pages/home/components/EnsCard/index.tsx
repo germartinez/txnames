@@ -1,11 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { decodeEnsRecordLogs } from '@/lib/web3'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useMemo } from 'react'
 import { keccak256, namehash, toHex } from 'viem'
 import { useChainId, useConnection, useEnsName, useEnsResolver } from 'wagmi'
-import { RecordItem } from './RecordItem'
+import { RecordItem, RecordItemSkeleton } from './RecordItem'
 
 export default function EnsCard() {
   const chainId = useChainId()
@@ -19,7 +18,7 @@ export default function EnsCard() {
     },
   })
 
-  const { data: ensResolver, isFetching: isFetchingEnsResolver } = useEnsResolver({
+  const { data: ensResolver, isLoading: isLoadingEnsResolver } = useEnsResolver({
     name: ensName || undefined,
     chainId,
     query: {
@@ -29,7 +28,7 @@ export default function EnsCard() {
 
   const {
     data: logs,
-    isFetching: isFetchingLogs,
+    isLoading: isLoadingLogs,
     isError: isErrorLogs,
     isPending: isPendingLogs,
   } = useGetContractLogsQuery({
@@ -69,10 +68,10 @@ export default function EnsCard() {
           )}
         </CardContent>
       </Card>
-      {isFetchingLogs || isFetchingEnsResolver ? (
+      {isLoadingLogs || isLoadingEnsResolver ? (
         <div className="flex flex-col gap-2">
-          <Skeleton className="w-full h-20 animate-pulse rounded-none" />
-          <Skeleton className="w-full h-20 animate-pulse rounded-none" />
+          <RecordItemSkeleton />
+          <RecordItemSkeleton />
         </div>
       ) : isPendingLogs ? (
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
