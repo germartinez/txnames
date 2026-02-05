@@ -1,9 +1,23 @@
 import { Card } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { AbiItem } from '@/repositories/contracts'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
 import FunctionDetails from './FunctionDetails'
+
+export function FunctionItemSkeleton() {
+  return (
+    <Card className="flex flex-row gap-4 shadow-none p-4 overflow-hidden rounded-none items-center justify-between">
+      <div className="flex flex-col gap-2 w-full">
+        <Skeleton className="h-6 w-1/2 animate-pulse" />
+        <Skeleton className="h-4 w-1/4 animate-pulse" />
+        <Skeleton className="h-4 w-1/4 animate-pulse" />
+      </div>
+      <Skeleton className="h-8 w-8 animate-pulse" />
+    </Card>
+  )
+}
 
 export function FunctionItem({ func }: { func: AbiItem }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +34,7 @@ export function FunctionItem({ func }: { func: AbiItem }) {
           <div
             className={`text-start rounded-lg flex justify-between gap-2 p-2 m-2 items-center ${isOpen ? 'bg-muted' : ''}`}
           >
-            <div className="break-all px-2">
+            <div className="break-all">
               <p className="">{func.name}</p>
               {func.inputs?.map((input) => (
                 <p key={`${input.name}-${input.type}`} className="text-xs text-muted-foreground">

@@ -1,8 +1,21 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ChevronDown, ChevronUp, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
+
+export function RecordItemSkeleton() {
+  return (
+    <Card className="flex flex-row gap-4 shadow-none p-4 overflow-hidden rounded-none items-center justify-between">
+      <Skeleton className="h-6 w-1/4 animate-pulse" />
+      <div className="flex gap-2">
+        <Skeleton className="h-8 w-8 animate-pulse" />
+        <Skeleton className="h-8 w-8 animate-pulse" />
+      </div>
+    </Card>
+  )
+}
 
 export function RecordItem({ record }: { record: { key: string; value: string } }) {
   const [isOpen, setIsOpen] = useState(false)

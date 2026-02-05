@@ -6,7 +6,7 @@ import type { AbiItem } from '@/repositories/contracts'
 import { useState } from 'react'
 import type { PublicClient } from 'viem'
 import { useChainId, usePublicClient } from 'wagmi'
-import { FunctionItem } from './FunctionItem'
+import { FunctionItem, FunctionItemSkeleton } from './FunctionItem'
 
 export default function ContractCard() {
   const [address, setAddress] = useState('')
@@ -45,9 +45,10 @@ export default function ContractCard() {
         </CardContent>
       </Card>
       {isFetching ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          Loading...
-        </Card>
+        <div className="flex flex-col gap-2">
+          <FunctionItemSkeleton />
+          <FunctionItemSkeleton />
+        </div>
       ) : isPending ? (
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
           <p>List of contract functions</p>

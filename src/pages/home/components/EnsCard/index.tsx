@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { decodeEnsRecordLogs } from '@/lib/web3'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useMemo } from 'react'
@@ -69,9 +70,10 @@ export default function EnsCard() {
         </CardContent>
       </Card>
       {isFetchingLogs || isFetchingEnsResolver ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          Loading...
-        </Card>
+        <div className="flex flex-col gap-2">
+          <Skeleton className="w-full h-20 animate-pulse rounded-none" />
+          <Skeleton className="w-full h-20 animate-pulse rounded-none" />
+        </div>
       ) : isPendingLogs ? (
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
           <p>List of named transactions</p>
