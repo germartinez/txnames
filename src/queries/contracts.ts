@@ -1,7 +1,7 @@
 import { resolveImplementationOfProxyContract } from '@/lib/web3'
 import { contractsRepository, type AbiItem } from '@/repositories/contracts'
 import { useQuery } from '@tanstack/react-query'
-import type { PublicClient } from 'viem'
+import { zeroAddress, type PublicClient } from 'viem'
 
 export function useGetContractFunctionsQuery(args: {
   chainId: number
@@ -40,10 +40,11 @@ export function useGetContractLogsQuery(args: {
   topic0: string
   topic1: string
 }) {
+  const isValidAddress = !!args.address && args.address !== zeroAddress
   return useQuery({
     queryKey: ['contracts', 'logs', args.chainId, args.address],
     queryFn: () =>
       contractsRepository.getContractLogs(args.chainId, args.address, args.topic0, args.topic1),
-    enabled: !!args.chainId && !!args.address,
+    enabled: !!args.chainId && isValidAddress,
   })
 }

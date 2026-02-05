@@ -51,7 +51,7 @@ export default function FunctionDetails({
       args: inputValues,
     })
     const ensRecordData = encodeSetEnsRecordData(ensName, {
-      key: `${data.transactionName.trim().toLowerCase()}.${ensName}`,
+      key: data.transactionName.trim().toLowerCase(),
       value: JSON.stringify({
         to: contractAddress,
         value: 0,
@@ -77,6 +77,7 @@ export default function FunctionDetails({
                 type="text"
                 placeholder={`${input.name} (${input.type})`}
                 {...register(`input_${index}`)}
+                required
               />
             </div>
           ))}
@@ -90,6 +91,7 @@ export default function FunctionDetails({
             placeholder={`${functionAbi.name.toLowerCase()}-1`}
             className="flex-1"
             {...register('transactionName')}
+            required
           />
           {ensName && <div className="flex items-center justify-center mr-1">.{ensName}</div>}
         </div>

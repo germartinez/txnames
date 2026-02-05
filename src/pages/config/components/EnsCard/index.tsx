@@ -38,9 +38,9 @@ export default function EnsCard() {
     topic1: namehash(ensName ?? ''),
   })
 
-  const decodedLogs: [string, string][] = useMemo(() => {
-    return decodeEnsRecordLogs(logs, ensName)
-  }, [logs, ensName])
+  const decodedLogs = useMemo(() => {
+    return !logs ? {} : decodeEnsRecordLogs(logs)
+  }, [logs])
 
   return (
     <div className="flex flex-col gap-8 flex-1">
@@ -80,11 +80,11 @@ export default function EnsCard() {
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
           Invalid contract
         </Card>
-      ) : !decodedLogs || decodedLogs.length === 0 ? (
+      ) : !decodedLogs || Object.keys(decodedLogs).length === 0 ? (
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">No logs</Card>
       ) : (
         <div className="flex flex-col gap-2">
-          {decodedLogs.map(([key, value]) => (
+          {Object.entries(decodedLogs).map(([key, value]) => (
             <RecordItem key={key} record={{ key, value }} />
           ))}
         </div>
