@@ -2,7 +2,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/useDebounce'
-import { decodeEnsRecordLogs, extractEnsName } from '@/lib/web3'
+import {
+  decodeEnsRecordLogs,
+  ENS_TXNAMES_RECORD_SUFFIX,
+  extractEnsName,
+  parseTxNamesEnsRecordKey,
+  type EnsName,
+} from '@/lib/ens'
 import { RecordItemSkeleton } from '@/pages/account/components/EnsCard/RecordItem'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useEffect, useMemo, useState } from 'react'
@@ -16,20 +22,16 @@ export default function ExecuteCard() {
   const debouncedTransactionName = useDebounce(transactionName, 300)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
 
-  const baseEns = useMemo(
-    () => extractEnsName(debouncedTransactionName)?.ensName,
-    [debouncedTransactionName],
-  )
-  const txNameMethod = useMemo(
-    () => extractEnsName(debouncedTransactionName)?.method,
+  const fullEnsName: EnsName | undefined = useMemo(
+    () => extractEnsName(debouncedTransactionName),
     [debouncedTransactionName],
   )
 
   const { data: ensResolver, isError: isErrorEnsResolver } = useEnsResolver({
-    name: baseEns ?? '',
+    name: fullEnsName?.ensName ?? '',
     chainId,
     query: {
-      enabled: !!baseEns,
+      enabled: !!fullEnsName?.ensName,
     },
   })
 
@@ -37,15 +39,19 @@ export default function ExecuteCard() {
     chainId,
     address: ensResolver ?? '',
     topic0: keccak256(toHex('TextChanged(bytes32,string,string,string)')),
-    topic1: namehash(baseEns ?? ''),
+    topic1: namehash(fullEnsName?.ensName ?? ''),
   })
 
+  useEffect(() => {
+    setIsPanelOpen(debouncedTransactionName !== '')
+  }, [debouncedTransactionName])
+
   const decodedLogs = useMemo(() => {
-    if (!logs) return []
+    if (!logs || !fullEnsName?.method) return []
 
-    const search = txNameMethod?.toLowerCase()
+    const search = fullEnsName.method.toLowerCase()
 
-    return Object.entries(decodeEnsRecordLogs(logs))
+    return Object.entries(decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_SUFFIX))
       .map(([key, value]) => ({ key, value }))
       .sort((a, b) => {
         const aMatch = search && a.key.toLowerCase().includes(search)
@@ -59,13 +65,14 @@ export default function ExecuteCard() {
         return a.key.localeCompare(b.key)
       })
       .slice(0, 5)
-  }, [logs, txNameMethod])
+  }, [logs, fullEnsName?.method])
 
   const handleExecute = async () => {
-    if (!decodedLogs || !baseEns) return
+    if (!decodedLogs || !fullEnsName?.ensName) return
 
     const record = decodedLogs.find(
-      (item) => item.key.replace('tx-names', baseEns) === debouncedTransactionName,
+      (item) =>
+        parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName) === debouncedTransactionName,
     )
     if (!record) return
 
@@ -81,12 +88,6 @@ export default function ExecuteCard() {
     }
   }
 
-  useEffect(() => {
-    if (debouncedTransactionName) {
-      setIsPanelOpen(true)
-    }
-  }, [debouncedTransactionName])
-
   const handleTransactionNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTransactionName(e.target.value)
   }
@@ -94,6 +95,51 @@ export default function ExecuteCard() {
   const handleSelectTransactionName = (transactionName: string) => {
     setTransactionName(transactionName)
     setIsPanelOpen(false)
+  }
+
+  let content: React.ReactNode = null
+  if (isPanelOpen) {
+    if (isLoadingLogs) {
+      content = (
+        <div className="flex flex-col gap-2">
+          <RecordItemSkeleton />
+          <RecordItemSkeleton />
+        </div>
+      )
+    } else if (!ensResolver || ensResolver === zeroAddress || isErrorEnsResolver) {
+      content = (
+        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+          Invalid ENS
+        </Card>
+      )
+    } else if (!decodedLogs || decodedLogs.length === 0) {
+      content = (
+        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+          No named transactions
+        </Card>
+      )
+    } else {
+      content = (
+        <div className="flex flex-col gap-2">
+          {fullEnsName &&
+            decodedLogs.map((item) => (
+              <Card
+                key={item.key}
+                className="shadow-none p-4 overflow-hidden rounded-none"
+                onClick={() =>
+                  handleSelectTransactionName(
+                    parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName),
+                  )
+                }
+              >
+                <div className="gap break-all text-sm">
+                  {parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName)}
+                </div>
+              </Card>
+            ))}
+        </div>
+      )
+    }
   }
 
   return (
@@ -118,38 +164,7 @@ export default function ExecuteCard() {
           </Button>
         </CardContent>
       </Card>
-      {isPanelOpen &&
-        (isLoadingLogs ? (
-          <div className="flex flex-col gap-2">
-            <RecordItemSkeleton />
-            <RecordItemSkeleton />
-          </div>
-        ) : transactionName === '' ? (
-          <></>
-        ) : !ensResolver || ensResolver === zeroAddress || isErrorEnsResolver ? (
-          <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-            Invalid ENS
-          </Card>
-        ) : !decodedLogs || decodedLogs.length === 0 ? (
-          <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-            No named transactions
-          </Card>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {baseEns &&
-              decodedLogs.map((item) => (
-                <Card
-                  key={item.key}
-                  className="shadow-none p-4 overflow-hidden rounded-none"
-                  onClick={() => handleSelectTransactionName(item.key.replace('tx-names', baseEns))}
-                >
-                  <div className="gap break-all text-sm">
-                    {item.key.replace('tx-names', baseEns)}
-                  </div>
-                </Card>
-              ))}
-          </div>
-        ))}
+      {content}
     </div>
   )
 }

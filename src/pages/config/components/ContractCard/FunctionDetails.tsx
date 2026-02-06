@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { encodeSetEnsRecordData } from '@/lib/web3'
+import { encodeSetEnsRecordData, formatTxNamesEnsRecordKey } from '@/lib/ens'
 import type { AbiItem } from '@/repositories/contracts'
 import { useForm } from 'react-hook-form'
 import { encodeFunctionData } from 'viem'
@@ -51,7 +51,7 @@ export default function FunctionDetails({
       args: inputValues,
     })
     const ensRecordData = encodeSetEnsRecordData(ensName, {
-      key: data.transactionName.trim().toLowerCase(),
+      key: formatTxNamesEnsRecordKey(data.transactionName),
       value: JSON.stringify({
         to: contractAddress,
         value: 0,

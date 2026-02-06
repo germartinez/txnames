@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { decodeEnsRecordLogs } from '@/lib/web3'
+import { decodeEnsRecordLogs, ENS_TXNAMES_RECORD_SUFFIX } from '@/lib/ens'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useMemo } from 'react'
 import { keccak256, namehash, toHex } from 'viem'
@@ -10,7 +10,7 @@ export default function EnsCard() {
   const chainId = useChainId()
   const { address: connectedAddress } = useConnection()
 
-  const { data: ensName, isError: isErrorEnsName } = useEnsName({
+  const { data: ensName, isLoading: isLoadingEnsName } = useEnsName({
     address: connectedAddress || undefined,
     chainId: Number(chainId),
     query: {
@@ -30,7 +30,6 @@ export default function EnsCard() {
     data: logs,
     isLoading: isLoadingLogs,
     isError: isErrorLogs,
-    isPending: isPendingLogs,
   } = useGetContractLogsQuery({
     chainId,
     address: ensResolver ?? '',
@@ -39,8 +38,42 @@ export default function EnsCard() {
   })
 
   const decodedLogs = useMemo(() => {
-    return !logs ? {} : decodeEnsRecordLogs(logs)
+    return !logs ? {} : decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_SUFFIX)
   }, [logs])
+
+  let content: React.ReactNode = null
+  if (isLoadingEnsName || isLoadingLogs || isLoadingEnsResolver) {
+    content = (
+      <div className="flex flex-col gap-2">
+        <RecordItemSkeleton />
+        <RecordItemSkeleton />
+      </div>
+    )
+  } else if (!ensName) {
+    content = (
+      <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+        Connect a wallet with an active ENS name to list your named transactions
+      </Card>
+    )
+  } else if (isErrorLogs) {
+    content = (
+      <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+        Invalid contract
+      </Card>
+    )
+  } else if (!decodedLogs || Object.keys(decodedLogs).length === 0) {
+    content = (
+      <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">No logs</Card>
+    )
+  } else {
+    content = (
+      <div className="flex flex-col gap-2">
+        {Object.entries(decodedLogs).map(([key, value]) => (
+          <RecordItem key={key} ensName={ensName} record={{ key, value }} />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-8 flex-1">
@@ -49,46 +82,15 @@ export default function EnsCard() {
           <CardTitle>Named Transactions</CardTitle>
           <CardDescription>Current named transactions for your primary ENS name.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 p-0 text-sm">
-          {isErrorEnsName ? (
-            <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500">
-              ERROR
-            </div>
-          ) : ensName === null ? (
-            <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-red-500">
-              No ENS name
-            </div>
-          ) : ensName ? (
+        {ensName && (
+          <CardContent className="flex flex-col gap-2 p-0 text-sm">
             <div className="flex items-center justify-center border rounded-md px-2 h-[36px] text-sm text-green-500">
               {ensName}
             </div>
-          ) : (
-            <div className="flex items-center justify-center border rounded-md px-2 h-[36px]"></div>
-          )}
-        </CardContent>
+          </CardContent>
+        )}
       </Card>
-      {isLoadingLogs || isLoadingEnsResolver ? (
-        <div className="flex flex-col gap-2">
-          <RecordItemSkeleton />
-          <RecordItemSkeleton />
-        </div>
-      ) : isPendingLogs ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          <p>List of named transactions</p>
-        </Card>
-      ) : isErrorLogs ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          Invalid contract
-        </Card>
-      ) : !decodedLogs || Object.keys(decodedLogs).length === 0 ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">No logs</Card>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {Object.entries(decodedLogs).map(([key, value]) => (
-            <RecordItem key={key} ensName={ensName} record={{ key, value }} />
-          ))}
-        </div>
-      )}
+      {content}
     </div>
   )
 }

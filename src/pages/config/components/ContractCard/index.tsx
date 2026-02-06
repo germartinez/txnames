@@ -15,15 +15,50 @@ export default function ContractCard() {
   const publicClient = usePublicClient()
 
   const {
-    data: functions,
+    data: contractFunctions,
     isLoading,
-    isPending,
     isError,
   } = useGetContractFunctionsQuery({
     chainId: Number(chainId),
     address: debouncedAddress,
     publicClient: publicClient as PublicClient,
   })
+
+  let content: React.ReactNode = null
+  if (debouncedAddress) {
+    if (isLoading) {
+      content = (
+        <div className="flex flex-col gap-2">
+          <FunctionItemSkeleton />
+          <FunctionItemSkeleton />
+        </div>
+      )
+    } else if (isError) {
+      content = (
+        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+          Invalid contract
+        </Card>
+      )
+    } else if (!contractFunctions || contractFunctions.length === 0) {
+      content = (
+        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
+          No functions
+        </Card>
+      )
+    } else {
+      content = (
+        <div className="flex flex-col gap-2">
+          {contractFunctions.map((functionAbi: AbiItem) => (
+            <FunctionItem
+              key={`${functionAbi.name}>${functionAbi.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
+              functionAbi={functionAbi}
+              contractAddress={debouncedAddress}
+            />
+          ))}
+        </div>
+      )
+    }
+  }
 
   return (
     <div className="flex flex-col gap-8 flex-1">
@@ -44,34 +79,7 @@ export default function ContractCard() {
           />
         </CardContent>
       </Card>
-      {isLoading ? (
-        <div className="flex flex-col gap-2">
-          <FunctionItemSkeleton />
-          <FunctionItemSkeleton />
-        </div>
-      ) : isPending ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          <p>List of contract functions</p>
-        </Card>
-      ) : isError ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          Invalid contract
-        </Card>
-      ) : !functions || functions.length === 0 ? (
-        <Card className="shadow-none p-16 text-center overflow-hidden rounded-none">
-          No functions
-        </Card>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {functions.map((functionAbi: AbiItem) => (
-            <FunctionItem
-              key={`${functionAbi.name}>${functionAbi.inputs?.map((input) => `${input.name}:${input.type}`).join('-')}`}
-              functionAbi={functionAbi}
-              contractAddress={debouncedAddress}
-            />
-          ))}
-        </div>
-      )}
+      {content}
     </div>
   )
 }
