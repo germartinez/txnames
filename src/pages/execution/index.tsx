@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import useDebounce from '@/hooks/useDebounce'
+import useDebounce from '@/hooks/use-debounce'
 import {
   decodeEnsRecordLogs,
   ENS_TXNAMES_RECORD_SUFFIX,
@@ -9,13 +9,13 @@ import {
   parseTxNamesEnsRecordKey,
   type EnsName,
 } from '@/lib/ens'
-import { RecordItemSkeleton } from '@/pages/account/components/EnsCard/RecordItem'
+import { RecordItemSkeleton } from '@/pages/account/components/record-item'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useEffect, useMemo, useState } from 'react'
 import { keccak256, namehash, toHex, zeroAddress } from 'viem'
 import { useChainId, useEnsResolver, useSendTransaction } from 'wagmi'
 
-export default function ExecuteCard() {
+export default function ExecutionPage() {
   const chainId = useChainId()
   const sendTransaction = useSendTransaction()
   const [transactionName, setTransactionName] = useState('')

@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { AbiItem } from '@/repositories/contracts'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
-import FunctionDetails from './FunctionDetails'
+import FunctionDetails from './function-details'
 
 export function FunctionItemSkeleton() {
   return (

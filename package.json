@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "clean": "rm -rf dist node_modules",
     "preview": "vite preview"
   },

@@ -1,5 +1,5 @@
-import Header from '@/components/Header'
-import Menu from '@/components/Menu'
+import Header from '@/components/header'
+import Menu from '@/components/menu'
 import { Outlet } from 'react-router-dom'
 
 export default function Layout() {
