@@ -11,10 +11,6 @@ export function parseTxNamesEnsRecordKey(key: string, ensName: string): string {
   return key.replace(ENS_TXNAMES_RECORD_SUFFIX, ensName)
 }
 
-export function isValidEnsRecordKey(key: string, ensName: string): boolean {
-  return key.endsWith(ENS_TXNAMES_RECORD_SUFFIX) || key.endsWith(`.${ensName}`)
-}
-
 export function decodeEnsRecordLogs(logs: Log[], domainFilter: string): Record<string, string> {
   if (!logs) return {}
 

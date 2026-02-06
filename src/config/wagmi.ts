@@ -1,8 +1,9 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { type AppKitNetwork, mainnet, sepolia } from '@reown/appkit/networks'
 import { createAppKit } from '@reown/appkit/react'
+import { env } from './env'
 
-const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID
+const projectId = env.appkitProjectId
 
 const metadata = {
   name: 'TX_NAMES',

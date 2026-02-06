@@ -1,4 +1,5 @@
 import { performRequest } from '@/client/apiClient'
+import { env } from '@/config/env'
 
 export type AbiItem = {
   type: string
@@ -33,7 +34,7 @@ export type Log = {
 export const contractsRepository = {
   getContractAbi: async (chainId: number, address: string): Promise<AbiItem[]> => {
     const response = await performRequest(
-      `https://api.etherscan.io/v2/api?module=contract&action=getabi&address=${address}&chainid=${chainId}&apikey=${import.meta.env.VITE_ETHERSCAN_API_KEY}`,
+      `https://api.etherscan.io/v2/api?module=contract&action=getabi&address=${address}&chainid=${chainId}&apikey=${env.etherscanApiKey}`,
     )
     if (response.status === '0') {
       throw new Error(response.result)
@@ -49,7 +50,7 @@ export const contractsRepository = {
     topic1: string,
   ): Promise<Log[]> => {
     const response = await performRequest(
-      `https://api.etherscan.io/v2/api?module=logs&action=getlogs&address=${address}&chainid=${chainId}&topic0=${topic0}&topic1=${topic1}&apikey=${import.meta.env.VITE_ETHERSCAN_API_KEY}`,
+      `https://api.etherscan.io/v2/api?module=logs&action=getlogs&address=${address}&chainid=${chainId}&topic0=${topic0}&topic1=${topic1}&apikey=${env.etherscanApiKey}`,
     )
     if (response.status === '0') {
       throw new Error(response.result)
