@@ -6,9 +6,8 @@ import { env } from './env'
 const projectId = env.appkitProjectId
 
 const metadata = {
-  name: 'TX_NAMES',
-  description:
-    'Turn ENS names into ready-to-sign transactions by resolving to contract method calldata',
+  name: 'TXNames',
+  description: 'Turn ENS names into ready-to-sign transactions',
   url: 'https://txnames.germartinez.com',
   icons: ['https://raw.githubusercontent.com/germartinez/txnames/refs/heads/main/public/icon.png'],
 }

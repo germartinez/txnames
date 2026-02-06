@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom'
 
 export default function Layout() {
   return (
-    <div className="w-full p-4 mx-auto lg:p-8">
+    <div className="w-full p-6 mx-auto md:py-16 max-w-3xl">
       <Header />
       <Menu />
       <Outlet />

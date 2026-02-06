@@ -16,21 +16,21 @@ export default function Header() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-2 mb-8">
+    <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-8 mb-12">
       <div className="flex items-center gap-2">
-        <img src={icon} alt="TX_NAMES" className="w-10 h-10 rounded-lg" />
-        <h1 className="text-2xl font-bold">TX_NAMES</h1>
+        <img src={icon} alt="TXNames" className="w-10 h-10 rounded-lg" />
+        <h1 className="text-3xl font-bold">TXNames</h1>
       </div>
       <div className="flex items-stretch gap-2">
         <Button
           variant="outline"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="cursor-pointer"
+          className="cursor-pointer shadow-none bg-card"
         >
           {theme === 'dark' ? <MoonIcon className="size-4" /> : <SunIcon className="size-4" />}
         </Button>
         {address && (
-          <div className="border rounded-md px-3 text-sm flex items-center">
+          <div className="border rounded-md px-3 text-sm flex items-center bg-card">
             {truncateAddress(address)}
           </div>
         )}
@@ -38,7 +38,7 @@ export default function Header() {
           value={chainId?.toString()}
           onValueChange={(value) => switchChain.mutate({ chainId: Number(value) })}
         >
-          <SelectTrigger>
+          <SelectTrigger className="shadow-none cursor-pointer bg-card">
             <SelectValue placeholder="Select a chain" />
           </SelectTrigger>
           <SelectContent>
@@ -51,12 +51,16 @@ export default function Header() {
             size="icon"
             variant="outline"
             onClick={() => disconnect.mutate()}
-            className="text-sm cursor-pointer"
+            className="text-sm cursor-pointer shadow-none bg-card"
           >
             <XIcon className="size-4" />
           </Button>
         ) : (
-          <Button variant="outline" onClick={() => open()} className="cursor-pointer">
+          <Button
+            variant="outline"
+            onClick={() => open()}
+            className="cursor-pointer shadow-none bg-card"
+          >
             Connect Wallet
           </Button>
         )}

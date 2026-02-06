@@ -8,7 +8,7 @@ import RecordDetails from './record-details'
 
 export function RecordItemSkeleton() {
   return (
-    <Card className="flex flex-row gap-4 shadow-none p-4 overflow-hidden rounded-none items-center justify-between">
+    <Card className="flex flex-row gap-4 shadow-none p-4 overflow-hidden rounded-2xl items-center justify-between">
       <Skeleton className="h-6 w-1/4 animate-pulse" />
       <div className="flex gap-2">
         <Skeleton className="h-8 w-8 animate-pulse" />
@@ -28,7 +28,7 @@ export function RecordItem({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <Card className="shadow-none p-0 overflow-hidden rounded-none">
+    <Card className="shadow-none p-0 overflow-hidden rounded-2xl">
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
@@ -39,7 +39,7 @@ export function RecordItem({
           <div
             className={`text-start rounded-lg flex items-center justify-between gap-2 p-2 m-2 ${isOpen ? 'bg-muted' : ''}`}
           >
-            <div className="break-all">{parseTxNamesEnsRecordKey(record.key, ensName)}</div>
+            <div className="font-medium">{parseTxNamesEnsRecordKey(record.key, ensName)}</div>
             <div className="p-2 flex items-center justify-center">
               {isOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
             </div>

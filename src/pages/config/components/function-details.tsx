@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { encodeSetEnsRecordData, formatTxNamesEnsRecordKey } from '@/lib/ens'
+import { encodeSetEnsRecordData } from '@/lib/ens'
 import type { AbiItem } from '@/repositories/contracts'
 import { useForm } from 'react-hook-form'
 import { encodeFunctionData } from 'viem'
@@ -51,7 +51,7 @@ export default function FunctionDetails({
       args: inputValues,
     })
     const ensRecordData = encodeSetEnsRecordData(ensName, {
-      key: formatTxNamesEnsRecordKey(data.transactionName),
+      key: data.transactionName,
       value: JSON.stringify({
         to: contractAddress,
         value: 0,
@@ -67,7 +67,7 @@ export default function FunctionDetails({
   }
 
   return (
-    <form onSubmit={handleSubmit(handleSave)} className="m-2 mt-2 flex flex-col gap-4">
+    <form onSubmit={handleSubmit(handleSave)} className="m-4 mt-2 flex flex-col gap-4">
       {functionAbi.inputs && functionAbi.inputs.length > 0 && (
         <div className="flex flex-col gap-2">
           <p className="text-sm">Parameters</p>
@@ -96,8 +96,8 @@ export default function FunctionDetails({
           {ensName && <div className="flex items-center justify-center mr-1">.{ensName}</div>}
         </div>
       </div>
-      <Button type="submit" className="w-full" disabled={!ensName}>
-        Save
+      <Button type="submit" className="w-full cursor-pointer shadow-none" disabled={!ensName}>
+        {sendTransaction.isPending ? 'Saving...' : 'Save'}
       </Button>
     </form>
   )

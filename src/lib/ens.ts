@@ -1,17 +1,17 @@
 import type { Log } from '@/repositories/contracts'
 import { decodeEventLog, encodeFunctionData, namehash, type Address } from 'viem'
 
-export const ENS_TXNAMES_RECORD_SUFFIX = '.tx-names'
+export const ENS_TXNAMES_RECORD_SUFFIX = 'tx-names'
 
 export function formatTxNamesEnsRecordKey(transactionName: string): string {
-  return `${transactionName.trim().toLowerCase()}${ENS_TXNAMES_RECORD_SUFFIX}`
+  return `${transactionName.trim().toLowerCase()}.${ENS_TXNAMES_RECORD_SUFFIX}`
 }
 
 export function parseTxNamesEnsRecordKey(key: string, ensName: string): string {
   return key.replace(ENS_TXNAMES_RECORD_SUFFIX, ensName)
 }
 
-export function decodeEnsRecordLogs(logs: Log[], domainFilter: string): Record<string, string> {
+export function decodeEnsRecordLogs(logs: Log[], filter: string): Record<string, string> {
   if (!logs) return {}
 
   const logsRecords: Record<string, string> = {}
@@ -34,7 +34,7 @@ export function decodeEnsRecordLogs(logs: Log[], domainFilter: string): Record<s
         ],
       })
       const { key, value } = decoded.args
-      if (key.endsWith(domainFilter)) {
+      if (key.includes(filter)) {
         logsRecords[key] = value
       }
     } catch (error) {
