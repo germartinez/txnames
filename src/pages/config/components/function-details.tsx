@@ -34,14 +34,11 @@ export default function FunctionDetails({
   })
 
   const handleSave = async (data: FormData) => {
-    if (!ensResolver || !ensName) {
-      return
-    }
+    if (!ensResolver || !ensName) return
 
     const inputValues: string[] = []
     functionAbi.inputs?.forEach((_input, index) => {
-      const fieldName = `input_${index}`
-      const value = data[fieldName] || ''
+      const value = data[`input_${index}`]
       inputValues.push(value)
     })
 

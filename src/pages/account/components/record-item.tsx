@@ -39,7 +39,7 @@ export function RecordItem({
           <div
             className={`text-start rounded-lg flex items-center justify-between gap-2 p-2 m-2 ${isOpen ? 'bg-muted' : ''}`}
           >
-            <div className="font-medium">{parseTxNamesEnsRecordKey(record.key, ensName)}</div>
+            <div>{parseTxNamesEnsRecordKey(record.key, ensName)}</div>
             <div className="p-2 flex items-center justify-center">
               {isOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
             </div>

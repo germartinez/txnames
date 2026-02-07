@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/use-debounce'
 import {
   decodeEnsRecordLogs,
-  ENS_TXNAMES_RECORD_SUFFIX,
+  ENS_TXNAMES_RECORD_PREFIX,
   extractEnsName,
   parseTxNamesEnsRecordKey,
   type EnsName,
@@ -46,7 +46,7 @@ export default function ExecutionPage() {
   const matchingFunctions = useMemo(() => {
     if (!logs) return []
 
-    const logsRecords = decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_SUFFIX)
+    const logsRecords = decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_PREFIX)
     const results = Object.entries(logsRecords).map(([key, value]) => ({ key, value }))
 
     const search = fullEnsName?.method?.toLowerCase() ?? ''
@@ -115,7 +115,7 @@ export default function ExecutionPage() {
     } else if (!matchingFunctions || matchingFunctions.length === 0) {
       content = (
         <Card className="shadow-none p-16 text-center overflow-hidden rounded-2xl">
-          <p className="text-muted-foreground">No named transactions</p>
+          <p className="text-muted-foreground">No named transactions configured for this ENS</p>
         </Card>
       )
     } else if (fullEnsName) {
@@ -141,7 +141,7 @@ export default function ExecutionPage() {
         <CardContent className="flex flex-col gap-4 p-0">
           <Input
             type="text"
-            placeholder="method.ensname.eth / ensname.eth"
+            placeholder="txname.ensname.eth / ensname.eth"
             value={transactionName}
             onChange={handleTransactionNameChange}
             className="w-full"

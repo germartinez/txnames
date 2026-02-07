@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { decodeEnsRecordLogs, ENS_TXNAMES_RECORD_SUFFIX } from '@/lib/ens'
+import { decodeEnsRecordLogs, ENS_TXNAMES_RECORD_PREFIX } from '@/lib/ens'
 import { useGetContractLogsQuery } from '@/queries/contracts'
 import { useMemo } from 'react'
 import { keccak256, namehash, toHex } from 'viem'
@@ -60,7 +60,7 @@ export default function AccountPage() {
   })
 
   const decodedLogs = useMemo(() => {
-    return !logs ? {} : decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_SUFFIX)
+    return !logs ? {} : decodeEnsRecordLogs(logs, ENS_TXNAMES_RECORD_PREFIX)
   }, [logs])
 
   let content: React.ReactNode = null
@@ -75,7 +75,7 @@ export default function AccountPage() {
     content = (
       <Card className="shadow-none p-16 text-center overflow-hidden rounded-2xl">
         <p className="text-muted-foreground">
-          Connect a wallet with an active ENS name to list your named transactions.
+          Connect a wallet with an active ENS name to list your named transactions
         </p>
       </Card>
     )
@@ -88,7 +88,7 @@ export default function AccountPage() {
   } else if (!decodedLogs || Object.keys(decodedLogs).length === 0) {
     content = (
       <Card className="shadow-none p-16 text-center overflow-hidden rounded-2xl">
-        <p className="text-muted-foreground">No named transactions</p>
+        <p className="text-muted-foreground">No named transactions configured for this ENS name</p>
       </Card>
     )
   } else {
@@ -107,7 +107,7 @@ export default function AccountPage() {
         <CardHeader className="p-0">
           <CardTitle className="text-2xl">My Named Transactions</CardTitle>
           <CardDescription className="text-md text-muted-foreground">
-            List of configured transactions for your primary ENS name.
+            List of configured transactions for your primary ENS name
           </CardDescription>
         </CardHeader>
         {ensName && (

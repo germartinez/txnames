@@ -1,14 +1,16 @@
 import type { Log } from '@/repositories/contracts'
 import { decodeEventLog, encodeFunctionData, namehash, type Address } from 'viem'
 
-export const ENS_TXNAMES_RECORD_SUFFIX = 'tx-names'
+export const ENS_TXNAMES_RECORD_PREFIX = 'txnames'
 
 export function formatTxNamesEnsRecordKey(transactionName: string): string {
-  return `${transactionName.trim().toLowerCase()}.${ENS_TXNAMES_RECORD_SUFFIX}`
+  return `${transactionName.trim().toLowerCase()}.${ENS_TXNAMES_RECORD_PREFIX}`
 }
 
 export function parseTxNamesEnsRecordKey(key: string, ensName: string): string {
-  return key.replace(ENS_TXNAMES_RECORD_SUFFIX, ensName)
+  const prefix = `${ENS_TXNAMES_RECORD_PREFIX}.`
+  const transactionName = key.slice(prefix.length)
+  return transactionName.concat(`.${ensName}`)
 }
 
 export function decodeEnsRecordLogs(logs: Log[], filter: string): Record<string, string> {
@@ -34,7 +36,7 @@ export function decodeEnsRecordLogs(logs: Log[], filter: string): Record<string,
         ],
       })
       const { key, value } = decoded.args
-      if (key.includes(filter)) {
+      if (key.startsWith(filter)) {
         logsRecords[key] = value
       }
     } catch (error) {
@@ -55,7 +57,7 @@ export function encodeSetEnsRecordData(
   ensName: string,
   option: { key: string; value: string },
 ): Address {
-  const node = namehash(ensName)
+  const node = namehash(ensName.toLowerCase())
   const data = encodeFunctionData({
     abi: [
       {
@@ -71,7 +73,7 @@ export function encodeSetEnsRecordData(
       },
     ],
     functionName: 'setText',
-    args: [node, option.key + ENS_TXNAMES_RECORD_SUFFIX, option.value],
+    args: [node, `${ENS_TXNAMES_RECORD_PREFIX}.${option.key.trim().toLowerCase()}`, option.value],
   })
   return data
 }
