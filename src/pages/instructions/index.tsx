@@ -8,7 +8,7 @@ export default function InstructionsPage() {
       <CardHeader className="p-0">
         <CardTitle className="text-2xl">Instructions</CardTitle>
         <CardDescription className="text-md text-muted-foreground">
-          TXNames lets you resolve ENS names into executable on-chain transactions.
+          TXNames transforms ENS names into human-readable, executable Ethereum transactions.
         </CardDescription>
         <Disclaimer className="rounded-lg" />
       </CardHeader>

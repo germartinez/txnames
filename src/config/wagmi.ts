@@ -7,7 +7,8 @@ const projectId = env.appkitProjectId
 
 const metadata = {
   name: 'TXNames',
-  description: 'TXNames lets you resolve ENS names into executable on-chain transactions',
+  description:
+    'TXNames transforms ENS names into human-readable, executable Ethereum transactions.',
   url: 'https://txnames.germartinez.com',
   icons: ['https://raw.githubusercontent.com/germartinez/txnames/refs/heads/main/public/icon.png'],
 }
