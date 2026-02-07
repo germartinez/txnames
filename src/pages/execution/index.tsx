@@ -12,16 +12,31 @@ import {
 } from '@/lib/ens'
 import { RecordItemSkeleton } from '@/pages/account/components/record-item'
 import { useGetContractLogsQuery } from '@/queries/contracts'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { keccak256, namehash, toHex, zeroAddress } from 'viem'
-import { useChainId, useEnsResolver, useSendTransaction } from 'wagmi'
+import { useChainId, useEnsResolver, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
 import MatchingFunctionsList from './components/matching-functions-list'
 
 export default function ExecutionPage() {
   const chainId = useChainId()
-  const sendTransaction = useSendTransaction()
+
   const [transactionName, setTransactionName] = useState('')
   const debouncedTransactionName = useDebounce(transactionName, 300)
+
+  const { data: hash, mutateAsync: sendTx, isPending: isSigning } = useSendTransaction()
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+    confirmations: 1,
+    query: {
+      enabled: !!hash,
+    },
+  })
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setTransactionName('')
+    }
+  }, [isConfirmed])
 
   const fullEnsName: EnsName | undefined = useMemo(
     () => extractEnsName(debouncedTransactionName),
@@ -61,7 +76,6 @@ export default function ExecutionPage() {
       if (!aMatch && bMatch) return 1
       return a.key.localeCompare(b.key)
     })
-    //.slice(0, 5)
   }, [logs, fullEnsName])
 
   const executableRecord = useMemo(() => {
@@ -75,11 +89,11 @@ export default function ExecutionPage() {
   const isExecutable = !!executableRecord
 
   const handleExecute = async () => {
-    if (!matchingFunctions || !fullEnsName?.ensName || !isExecutable) return
+    if (!isExecutable) return
 
     try {
       const transactionData = JSON.parse(executableRecord.value)
-      await sendTransaction.mutateAsync({
+      await sendTx({
         to: transactionData.to as `0x${string}`,
         value: BigInt(transactionData.value || 0),
         data: transactionData.data as `0x${string}`,
@@ -129,6 +143,9 @@ export default function ExecutionPage() {
     }
   }
 
+  const isDisabled = !isExecutable || isSigning || isConfirming
+  const buttonLabel = isSigning ? 'Signing...' : isConfirming ? 'Confirming...' : 'Execute'
+
   return (
     <div className="flex flex-col gap-2 flex-1">
       <Card className="shadow-none p-6 gap-4 overflow-hidden rounded-2xl">
@@ -148,10 +165,10 @@ export default function ExecutionPage() {
           />
           <Button
             onClick={handleExecute}
-            disabled={sendTransaction.isPending || !isExecutable}
+            disabled={isDisabled}
             className="w-full cursor-pointer shadow-none"
           >
-            {sendTransaction.isPending ? 'Executing...' : 'Execute'}
+            {buttonLabel}
           </Button>
         </CardContent>
       </Card>

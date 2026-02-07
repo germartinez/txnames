@@ -20,9 +20,7 @@ export default function MatchingFunctionsList({
             handleSelectTransactionName(parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName))
           }
         >
-          <div className="gap break-all text-sm">
-            {parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName)}
-          </div>
+          <div className="break-all">{parseTxNamesEnsRecordKey(item.key, fullEnsName.ensName)}</div>
         </Card>
       ))}
     </div>

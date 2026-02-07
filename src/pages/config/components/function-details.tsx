@@ -2,9 +2,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { encodeSetEnsRecordData } from '@/lib/ens'
 import type { AbiItem } from '@/repositories/contracts'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { encodeFunctionData } from 'viem'
-import { useChainId, useConnection, useEnsName, useEnsResolver, useSendTransaction } from 'wagmi'
+import {
+  useChainId,
+  useConnection,
+  useEnsName,
+  useEnsResolver,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 
 type FormData = {
   functionName: string
@@ -21,10 +29,7 @@ export default function FunctionDetails({
 }) {
   const chainId = useChainId()
   const { address } = useConnection()
-  const sendTransaction = useSendTransaction()
   const { data: ensName } = useEnsName({ address, chainId })
-  const { register, handleSubmit } = useForm<FormData>()
-
   const { data: ensResolver } = useEnsResolver({
     name: ensName ?? '',
     chainId,
@@ -32,6 +37,22 @@ export default function FunctionDetails({
       enabled: !!ensName,
     },
   })
+
+  const { data: hash, mutateAsync: sendTx, isPending: isSigning } = useSendTransaction()
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+    confirmations: 1,
+    query: {
+      enabled: !!hash,
+    },
+  })
+
+  const { register, handleSubmit, reset } = useForm<FormData>()
+  useEffect(() => {
+    if (isConfirmed) {
+      reset()
+    }
+  }, [isConfirmed, reset])
 
   const handleSave = async (data: FormData) => {
     if (!ensResolver || !ensName) return
@@ -57,11 +78,14 @@ export default function FunctionDetails({
     })
 
     try {
-      await sendTransaction.mutateAsync({ to: ensResolver, data: ensRecordData })
+      await sendTx({ to: ensResolver, data: ensRecordData })
     } catch (error) {
       console.error(error)
     }
   }
+
+  const isDisabled = !ensName || isSigning || isConfirming
+  const buttonLabel = isSigning ? 'Signing...' : isConfirming ? 'Confirming...' : 'Save'
 
   return (
     <form onSubmit={handleSubmit(handleSave)} className="m-4 mt-2 flex flex-col gap-4">
@@ -93,8 +117,8 @@ export default function FunctionDetails({
           {ensName && <div className="flex items-center justify-center mr-1">.{ensName}</div>}
         </div>
       </div>
-      <Button type="submit" className="w-full cursor-pointer shadow-none" disabled={!ensName}>
-        {sendTransaction.isPending ? 'Saving...' : 'Save'}
+      <Button type="submit" className="w-full cursor-pointer shadow-none" disabled={isDisabled}>
+        {buttonLabel}
       </Button>
     </form>
   )
