@@ -25,7 +25,7 @@ export default function AccountPage() {
     },
   })
 
-  const { data: ensUserName, isLoading: isLoadingEnsUserName } = useEnsText({
+  const { data: ensUserName } = useEnsText({
     name: ensName || undefined,
     key: 'name',
     query: {
@@ -33,7 +33,7 @@ export default function AccountPage() {
     },
   })
 
-  const { data: ensAvatar, isLoading: isLoadingEnsAvatar } = useEnsAvatar({
+  const { data: ensAvatar } = useEnsAvatar({
     name: ensName || undefined,
     query: {
       enabled: !!ensName,
@@ -75,7 +75,7 @@ export default function AccountPage() {
     content = (
       <Card className="shadow-none p-16 text-center overflow-hidden rounded-2xl">
         <p className="text-muted-foreground">
-          Connect a wallet with an active ENS name to list your named transactions
+          Connect a wallet with an active ENS name to list your named transactions.
         </p>
       </Card>
     )
@@ -88,7 +88,7 @@ export default function AccountPage() {
   } else if (!decodedLogs || Object.keys(decodedLogs).length === 0) {
     content = (
       <Card className="shadow-none p-16 text-center overflow-hidden rounded-2xl">
-        <p className="text-muted-foreground">No logs</p>
+        <p className="text-muted-foreground">No named transactions</p>
       </Card>
     )
   } else {
@@ -111,13 +111,11 @@ export default function AccountPage() {
           </CardDescription>
         </CardHeader>
         {ensName && (
-          <CardContent className="flex flex-col gap-2 p-0 text-sm">
-            <div className="flex items-center gap-4">
-              {ensAvatar && <img src={ensAvatar} alt={ensName} className="size-18 rounded-full" />}
-              <div className="flex flex-col gap-1">
-                <p className="text-xl font-semibold">{ensName}</p>
-                {ensUserName && <p className="text-muted-foreground/80">{ensUserName}</p>}
-              </div>
+          <CardContent className="flex items-center gap-4 p-0">
+            {ensAvatar && <img src={ensAvatar} alt={ensName} className="size-18 rounded-full" />}
+            <div className="flex flex-col gap-1">
+              <p className="text-xl font-semibold">{ensName}</p>
+              {ensUserName && <p className="text-muted-foreground/80">{ensUserName}</p>}
             </div>
           </CardContent>
         )}

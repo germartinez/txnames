@@ -1,3 +1,4 @@
+import { Disclaimer } from '@/components/disclaimer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import useDebounce from '@/hooks/use-debounce'
@@ -70,7 +71,7 @@ export default function ConfigPage() {
             <p>Configure the function with your preferred parameters and give it a name.</p>
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 p-0 text-sm">
+        <CardContent className="p-0">
           <Input
             type="text"
             placeholder="0x123..."
@@ -80,6 +81,7 @@ export default function ConfigPage() {
           />
         </CardContent>
       </Card>
+      <Disclaimer />
       {content}
     </div>
   )
