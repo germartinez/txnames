@@ -9,6 +9,7 @@ export default function Menu() {
     { path: '/', label: 'Execution' },
     { path: '/account', label: 'My transactions' },
     { path: '/config', label: 'Configuration' },
+    { path: '/instructions', label: 'Instructions' },
   ]
 
   return (
