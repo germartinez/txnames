@@ -1,4 +1,4 @@
-import { performRequest } from '@/client/apiClient'
+import { performRequest } from '@/client/api-client'
 import { env } from '@/config/env'
 
 export type AbiItem = {

@@ -1,4 +1,4 @@
-import { queryClient } from '@/client/queryClient.ts'
+import { queryClient } from '@/client/query-client.ts'
 import { wagmiAdapter } from '@/config/wagmi'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode } from 'react'
