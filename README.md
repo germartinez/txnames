@@ -4,6 +4,12 @@
 
 **TXNames transforms ENS names into human-readable, executable Ethereum transactions.**
 
+Live Application: [https://txnames.germartinez.com](https://txnames.germartinez.com).
+
+GitHub Repository: [https://github.com/germartinez/txnames](https://github.com/germartinez/txnames).
+
+## Description
+
 This decentralized application allows users to store, explore, and execute smart contract
 transactions via ENS text records. Users can assign intuitive names to transactions, making routine
 interactions with Ethereum contracts seamless and straightforward, without needing to visit each
@@ -100,12 +106,6 @@ pnpm build
   [React Hook Form](https://react-hook-form.com).
 - **UI & Styling**: [shadcn/ui](https://ui.shadcn.com), [Tailwind CSS](https://tailwindcss.com),
   [Lucide React](https://lucide.dev).
-
-## Links
-
-- **Live Application**: [https://txnames.germartinez.com](https://txnames.germartinez.com).
-- **GitHub Repository**:
-  [https://github.com/germartinez/txnames](https://github.com/germartinez/txnames).
 
 ## Disclaimer
 
