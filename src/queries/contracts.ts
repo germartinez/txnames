@@ -11,8 +11,8 @@ export function useGetContractFunctionsQuery(args: {
 }): UseQueryResult<AbiItem[]> {
   return useQuery({
     queryKey: ['contracts', 'abi', args.chainId, args.address],
-    queryFn: async () => {
-      let abi = await contractsRepository.getContractAbi(args.chainId, args.address)
+    queryFn: async ({ signal }) => {
+      let abi = await contractsRepository.getContractAbi(args.chainId, args.address, signal)
 
       const implementation = await resolveImplementationOfProxyContract(
         args.address,
@@ -20,7 +20,7 @@ export function useGetContractFunctionsQuery(args: {
       )
 
       if (implementation) {
-        abi = await contractsRepository.getContractAbi(args.chainId, implementation)
+        abi = await contractsRepository.getContractAbi(args.chainId, implementation, signal)
       }
 
       return (
@@ -43,9 +43,15 @@ export function useGetContractLogsQuery(args: {
 }): UseQueryResult<Log[]> {
   const isValidAddress = !!args.address && args.address !== zeroAddress
   return useQuery({
-    queryKey: ['contracts', 'logs', args.chainId, args.address],
-    queryFn: () =>
-      contractsRepository.getContractLogs(args.chainId, args.address, args.topic0, args.topic1),
+    queryKey: ['contracts', 'logs', args.chainId, args.address, args.topic0, args.topic1],
+    queryFn: ({ signal }) =>
+      contractsRepository.getContractLogs(
+        args.chainId,
+        args.address,
+        args.topic0,
+        args.topic1,
+        signal,
+      ),
     enabled: !!args.chainId && isValidAddress,
   })
 }

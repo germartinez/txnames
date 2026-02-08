@@ -32,9 +32,14 @@ export type Log = {
 }
 
 export const contractsRepository = {
-  getContractAbi: async (chainId: number, address: string): Promise<AbiItem[]> => {
+  getContractAbi: async (
+    chainId: number,
+    address: string,
+    signal?: AbortSignal,
+  ): Promise<AbiItem[]> => {
     const response = await performRequest(
       `https://api.etherscan.io/v2/api?module=contract&action=getabi&address=${address}&chainid=${chainId}&apikey=${env.etherscanApiKey}`,
+      { signal },
     )
     if (response.status === '0') {
       throw new Error(response.result)
@@ -48,9 +53,11 @@ export const contractsRepository = {
     address: string,
     topic0: string,
     topic1: string,
+    signal?: AbortSignal,
   ): Promise<Log[]> => {
     const response = await performRequest(
       `https://api.etherscan.io/v2/api?module=logs&action=getlogs&address=${address}&chainid=${chainId}&topic0=${topic0}&topic1=${topic1}&apikey=${env.etherscanApiKey}`,
+      { signal },
     )
     if (response.status === '0') {
       throw new Error(response.result)
